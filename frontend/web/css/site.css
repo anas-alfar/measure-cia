@@ -1,0 +1,226 @@
+html,
+body {
+    height: 100%;
+}
+
+.wrap {
+    min-height: 100%;
+    height: auto;
+    margin: 0 auto -60px;
+    padding: 0 0 60px;
+}
+
+.wrap > .container {
+    padding: 70px 15px 20px;
+}
+
+.footer {
+    height: 60px;
+    background-color: #f5f5f5;
+    border-top: 1px solid #ddd;
+    padding-top: 20px;
+}
+
+.jumbotron {
+    text-align: center;
+    background-color: transparent;
+}
+
+.jumbotron .btn {
+    font-size: 21px;
+    padding: 14px 24px;
+}
+
+.not-set {
+    color: #c55;
+    font-style: italic;
+}
+
+/* add sorting icons to gridview sort links */
+a.asc:after, a.desc:after {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    padding-left: 5px;
+}
+
+a.asc:after {
+    content: "\e151";
+}
+
+a.desc:after {
+    content: "\e152";
+}
+
+.sort-numerical a.asc:after {
+    content: "\e153";
+}
+
+.sort-numerical a.desc:after {
+    content: "\e154";
+}
+
+.sort-ordinal a.asc:after {
+    content: "\e155";
+}
+
+.sort-ordinal a.desc:after {
+    content: "\e156";
+}
+
+.grid-view td {
+    white-space: nowrap;
+}
+
+.grid-view .filters input,
+.grid-view .filters select {
+    min-width: 50px;
+}
+
+.hint-block {
+    display: block;
+    margin-top: 5px;
+    color: #999;
+}
+
+.error-summary {
+    color: #a94442;
+    background: #fdf7f7;
+    border-left: 3px solid #eed3d7;
+    padding: 10px 20px;
+    margin: 0 0 15px 0;
+}
+
+/* align the logout "link" (button in form) of the navbar */
+.nav > li > form {
+    padding: 8px;
+}
+
+@media(max-width:768px) {
+	.nav li > form {
+	    padding: 3px;
+	}
+}
+
+.nav > li > form > button:hover {
+    text-decoration: none;
+}
+
+//===============================================
+//===============================================
+
+
+
+.nav-wizard > li {
+    float: left;
+}
+.nav-wizard > li > a {
+    background-color: #eeeeee;
+    position: relative;
+}
+.nav-wizard > li > a .badge {
+    background-color: #428bca;
+    color: #eeeeee;
+    margin-left: 3px;
+}
+.nav-wizard > li:not(:first-child) > a {
+    padding-left: 34px;
+}
+.nav-wizard > li:not(:first-child) > a::before {
+    border-bottom: 20px inset transparent;
+    border-left: 20px solid #ffffff;
+    border-top: 20px inset transparent;
+    content: "";
+    height: 0;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 0;
+}
+.nav-wizard > li:not(:last-child) > a {
+    margin-right: 6px;
+}
+.nav-wizard > li:not(:last-child) > a::after {
+    border-bottom: 20px inset transparent;
+    border-left: 20px solid #eeeeee;
+    border-top: 20px inset transparent;
+    content: "";
+    height: 0;
+    position: absolute;
+    right: -20px;
+    top: 0;
+    width: 0;
+    z-index: 2;
+}
+.nav-wizard > li:first-child > a {
+    border-bottom-left-radius: 4px;
+    border-top-left-radius: 4px;
+}
+.nav-wizard > li:last-child > a {
+    border-bottom-right-radius: 4px;
+    border-top-right-radius: 4px;
+}
+.nav-wizard > li.done:hover > a, .nav-wizard > li:hover > a {
+    background-color: #d5d5d5;
+}
+.nav-wizard > li.done:hover > a::before, .nav-wizard > li:hover > a::before {
+    border-right-color: #d5d5d5;
+}
+.nav-wizard > li.done:hover > a::after, .nav-wizard > li:hover > a::after {
+    border-left-color: #d5d5d5;
+}
+.nav-wizard > li.done > a {
+    background-color: #e2e2e2;
+}
+.nav-wizard > li.done > a::before {
+    border-right-color: #e2e2e2;
+}
+.nav-wizard > li.done > a::after {
+    border-left-color: #e2e2e2;
+}
+.nav-wizard > li.active > a, .nav-wizard > li.active > a:hover, .nav-wizard > li.active > a:focus {
+    background-color: #428bca;
+    color: #ffffff;
+}
+.nav-wizard > li.active > a::after {
+    border-left-color: #428bca;
+}
+.nav-wizard > li.active > a .badge {
+    background-color: #ffffff;
+    color: #428bca;
+}
+.nav-wizard > li.disabled > a {
+    color: #777777;
+}
+.nav-wizard > li.disabled > a:hover, .nav-wizard > li.disabled > a:focus {
+    background-color: #eeeeee;
+    color: #777777;
+    cursor: default;
+    text-decoration: none;
+}
+.nav-wizard > li.disabled > a::before {
+    border-right-color: #eeeeee;
+}
+.nav-wizard > li.disabled > a::after {
+    border-left-color: #eeeeee;
+}
+.nav-wizard.nav-justified > li {
+    float: none;
+}
+.nav-wizard.nav-justified > li > a {
+    padding: 10px 15px;
+}
+@media (max-width: 768px) {
+.nav-wizard.nav-justified > li > a {
+    border-radius: 4px;
+    margin-right: 0;
+}
+.nav-wizard.nav-justified > li > a::before, .nav-wizard.nav-justified > li > a::after {
+    border: medium none !important;
+}
+}
+
