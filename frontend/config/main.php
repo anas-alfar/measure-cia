@@ -8,6 +8,7 @@ $params = array_merge(
 
 return [
     'id' => 'app-frontend',
+    'defaultRoute' => 'cia',
     'homeUrl'=>array('cia/registration'),
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],

@@ -7,7 +7,8 @@ use beastbytes\wizard\WizardBehavior;
 
 class CiaController extends Controller
 {
-
+    public $defaultAction = 'registration';
+    
     public function beforeAction($action)
     {
         $config = [];
