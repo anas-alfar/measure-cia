@@ -114,57 +114,57 @@ class CiaController extends Controller
                         $isHeaderRow = true;
 
                         if (!is_null($elements)) {
-                          foreach ($elements as $element) {
-                            if ($isHeaderRow) {
-                                $isHeaderRow = false;
-                                continue;
-                            }
-                            if ($isNewEntry) {
-                                ++$stats['total_rows'];
-                                $childNodes = $element->childNodes;
-                                $index = $childNodes->item(0)->nodeValue;
-                                $cve_id = $childNodes->item(2)->nodeValue;
-                                $vulnerability_types = $childNodes->item(8)->nodeValue;
-                                $confidentiality = $childNodes->item(24)->nodeValue;
-                                $integrity = $childNodes->item(26)->nodeValue;
-                                $availability = $childNodes->item(28)->nodeValue;
-                                $isNewEntry = false;
-                            } else {
-                                $childNodes = $element->childNodes;
-                                $description = $childNodes->item(0)->nodeValue;
-                                $isNewEntry = true;
-                                try {
-                                    $cveDetailsModel = new \frontend\models\CveDetails();
-                                    $cveDetailsModel->product = trim($model->product_name);
-                                    $cveDetailsModel->cve = trim($cve_id);
-                                    $cveDetailsModel->vulnerability = trim($vulnerability_types);
-                                    $cveDetailsModel->conf = trim($confidentiality);
-                                    $cveDetailsModel->integrity = trim($integrity);
-                                    $cveDetailsModel->availability = trim($availability);
-                                    $cveDetailsModel->description = trim($description);
-                                    $id = $cveDetailsModel->save(false);
-
-                                    $description = '';
-                                    $cve_id = '';
-                                    $vulnerability_types = '';
-                                    $confidentiality = '';
-                                    $integrity = '';
-                                    $availability = '';
-
-                                    array_push($modelIds, $cveDetailsModel->id);
-                                    $stats['modelIds'] = $modelIds;
-                                    $stats['product'] = $cveDetailsModel->product;
-
-                                    ++$stats['imported_rows'];
-                                } catch (\Exception $e ) {
-                                    ++$stats['invalid_rows'];
-                                    continue;
-                                } catch (\PDOException $e ) {
-                                    ++$stats['invalid_rows'];
+                            foreach ($elements as $element) {
+                                if ($isHeaderRow) {
+                                    $isHeaderRow = false;
                                     continue;
                                 }
+                                if ($isNewEntry) {
+                                    ++$stats['total_rows'];
+                                    $childNodes = $element->childNodes;
+                                    $index = $childNodes->item(0)->nodeValue;
+                                    $cve_id = $childNodes->item(2)->nodeValue;
+                                    $vulnerability_types = $childNodes->item(8)->nodeValue;
+                                    $confidentiality = $childNodes->item(24)->nodeValue;
+                                    $integrity = $childNodes->item(26)->nodeValue;
+                                    $availability = $childNodes->item(28)->nodeValue;
+                                    $isNewEntry = false;
+                                } else {
+                                    $childNodes = $element->childNodes;
+                                    $description = $childNodes->item(0)->nodeValue;
+                                    $isNewEntry = true;
+                                    try {
+                                        $cveDetailsModel = new \frontend\models\CveDetails();
+                                        $cveDetailsModel->product = trim($model->product_name);
+                                        $cveDetailsModel->cve = trim($cve_id);
+                                        $cveDetailsModel->vulnerability = trim($vulnerability_types);
+                                        $cveDetailsModel->conf = trim($confidentiality);
+                                        $cveDetailsModel->integrity = trim($integrity);
+                                        $cveDetailsModel->availability = trim($availability);
+                                        $cveDetailsModel->description = trim($description);
+                                        $id = $cveDetailsModel->save(false);
+
+                                        $description = '';
+                                        $cve_id = '';
+                                        $vulnerability_types = '';
+                                        $confidentiality = '';
+                                        $integrity = '';
+                                        $availability = '';
+
+                                        array_push($modelIds, $cveDetailsModel->id);
+                                        $stats['modelIds'] = $modelIds;
+                                        $stats['product'] = $cveDetailsModel->product;
+
+                                        ++$stats['imported_rows'];
+                                    } catch (\Exception $e ) {
+                                        ++$stats['invalid_rows'];
+                                        continue;
+                                    } catch (\PDOException $e ) {
+                                        ++$stats['invalid_rows'];
+                                        continue;
+                                    }
+                                }
                             }
-                          }
                         }
                     }
                     $session = Yii::$app->session;
@@ -204,18 +204,25 @@ class CiaController extends Controller
                 $response['data']['matched_files'] = 0;
                 $response['data']['invalid_cve'] = 0;
                 foreach ($result as $row => $value) {
+                    $this->scoreConversion($value->id, $value->conf, $value->integrity, $value->availability);
                     try{ 
-                        $matches = $this->processData($value->description);
-                        if (empty($matches)) {
+                        $versionsMapping = $this->findVersion($value->description);
+                        if (!empty($versionsMapping)) {
+                            $versionsMapping = $versionsMapping [0];
+                        } else {
+                            $versionsMapping = '';
+                        }
+                        $phpFilesMapping = $this->findPhpFiles($value->description);
+                        if (empty($phpFilesMapping)) {
                             ++$response['data']['invalid_cve'];
                             continue;
                         }
                         ++$response['data']['matched_cve'];
-                        $response['data']['matched_files'] += sizeof($matches);
-                        foreach ($matches as $filename) {
+                        $response['data']['matched_files'] += sizeof($phpFilesMapping);
+                        foreach ($phpFilesMapping as $filename) {
                             $cveFileModel = new \frontend\models\CveFile();
                             $cveFileModel->cve = trim($value->cve);
-                            $cveFileModel->filename = trim($filename);
+                            $cveFileModel->filename = trim($versionsMapping) . trim($filename);
                             $cveFileModel->save(false);
                         }
                     } catch (\Exception $e ) {
@@ -241,10 +248,44 @@ class CiaController extends Controller
         // return Json    
         return \yii\helpers\Json::encode($response);
     }
+    
+    private function scoreConversion($id, $conf, $integrity, $availability) {
+        try {
+            $cveDetailsModel = \frontend\models\CveDetails::findOne($id);
+            $cveDetailsModel->conf = $this->staticScoresMapping($conf);
+            $cveDetailsModel->integrity = $this->staticScoresMapping($integrity);
+            $cveDetailsModel->availability = $this->staticScoresMapping($availability);
+            $cveDetailsModel->save(false);
+        } catch (\Exception $e ) {
+            //do nothing
+        } catch (\PDOException $e ) {
+            //do nothing
+        }
+    }
 
-    private function processData ($description) {
-        //$applicationVersion = $value->product . '/1.2.3/';
-        //$filename = $applicationVersion . 'file.php';
+    private function staticScoresMapping ($textualScore = NULL) {
+        switch ($textualScore) {
+            case 'Complete':
+                return '0.66';
+                break;
+            case 'Partial':
+                return '0.275';
+                break;
+            case 'None':
+                return '0.0';
+                break;
+            default:
+                return $textualScore;
+                break;
+        }
+    }
+
+    private function findVersion ($description) {
+        preg_match_all('@[0-9]+\.[0-9\+]+[\.0-9\+]*[\.\+0-9a-zA-Z]*@', $description, $matches);
+        return $matches[0];
+    }
+
+    private function findPhpFiles ($description) {
         preg_match_all('@[/_a-zA-Z0-9\-\.]*.php@', $description, $matches);
         return $matches[0];
     }
