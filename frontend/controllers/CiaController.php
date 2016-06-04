@@ -204,14 +204,17 @@ class CiaController extends Controller
                 $response['data']['matched_files'] = 0;
                 $response['data']['invalid_cve'] = 0;
                 foreach ($result as $row => $value) {
+                    //transform score conversion from textual into numeric
                     $this->scoreConversion($value->id, $value->conf, $value->integrity, $value->availability);
                     try{ 
+                        //map version
                         $versionsMapping = $this->findVersion($value->description);
                         if (!empty($versionsMapping)) {
                             $versionsMapping = $versionsMapping [0];
                         } else {
                             $versionsMapping = '';
                         }
+                        //map files
                         $phpFilesMapping = $this->findPhpFiles($value->description);
                         if (empty($phpFilesMapping)) {
                             ++$response['data']['invalid_cve'];
