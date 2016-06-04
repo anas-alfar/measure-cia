@@ -210,7 +210,7 @@ class CiaController extends Controller
                         //map version
                         $versionsMapping = $this->findVersion($value->description);
                         if (!empty($versionsMapping)) {
-                            $versionsMapping = $versionsMapping [0];
+                            $versionsMapping = $versionsMapping [0] . '/';
                         } else {
                             $versionsMapping = '';
                         }
