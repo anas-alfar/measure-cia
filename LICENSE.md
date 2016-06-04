@@ -1,9 +1,11 @@
-The Yii framework is free software. It is released under the terms of
+This work has been licensed under CC Attribution (CC BY)
+This license lets others distribute, remix, tweak, and build upon this work, even commercially, as long as they credit the author for the original creation.
+
+However, The Yii framework is free software. It is released under the terms of
 the following BSD License.
 
 Copyright © 2008 by Yii Software LLC (http://www.yiisoft.com)
 All rights reserved.
-
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
 are met:
